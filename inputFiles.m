@@ -6,17 +6,142 @@ caseValues = [0.01 1 5 10 25 50 75 100 200 300 400 500 750 1000 5000 10000 25000
 
 % The player will always begin at the first round
 TOTAL_ROUNDS = 9;
+TOTAL_EPISODES = 47;
 roundNum = 1; 
-conditionalExpect = zeros(47, TOTAL_ROUNDS);
+conditionalExpect = zeros(TOTAL_EPISODES, TOTAL_ROUNDS);
 
-% The data will be opened and scrutinized so long as the conditional
-% statement for the while loop is still true.
-fid = fopen('dealornodeal.xls');
-while ~feof(fid)
-    % Identify the current value 
+% The data will be opened 
+a = xlsread('dealornodeal.xlsx', 'A2:AD356');
+
+%%
+% Determine how many contestants participated in a particular round
+roundsTotal = zeros(1, TOTAL_ROUNDS);
+for i = 1:TOTAL_ROUNDS
+    roundsTotal(i) = sum(a(:,1) == i);
 end
 
-% reiterate through all the columns in that round with a for-loop
-% if ('x') 
-%   then replace that value with a 0
-% end
+% Creating the array and its incrementors here
+roundOne = zeros(roundsTotal(1), 2); inc1 = 1;
+roundTwo = zeros(roundsTotal(2), 2); inc2 = 1;
+roundThree = zeros(roundsTotal(3), 2); inc3 = 1;
+roundFour = zeros(roundsTotal(4), 2); inc4 = 1;
+roundFive = zeros(roundsTotal(5), 2); inc5 = 1;
+roundSix = zeros(roundsTotal(6), 2); inc6 = 1;
+roundSeven = zeros(roundsTotal(7), 2); inc7 = 1;
+roundEight = zeros(roundsTotal(8), 2); inc8 = 1;
+roundNine = zeros(roundsTotal(9), 2); inc9 = 1;
+
+%%
+% The data will be scruntinized here
+[rowsA, colsA] = size(a);
+for i = 1:rowsA
+    for j = 3:colsA
+        if (a(i,j) == 0)
+            caseValues(j-2) = 0;
+        end
+    end
+    ex = calculateRoundExpectation(caseValues, a(i,1));
+    switch (a(i,1))
+        case 1
+            roundOne(inc1,1) = a(i,2);
+            roundOne(inc1,2) = ex;
+            inc1 = inc1 + 1;
+        case 2
+            roundTwo(inc2,1) = a(i,2);
+            roundTwo(inc2,2) = ex;
+            inc2 = inc2 + 1;
+        case 3
+            roundThree(inc3,1) = a(i,2);
+            roundThree(inc3,2) = ex;
+            inc3 = inc3 + 1;
+        case 4
+            roundFour(inc4,1) = a(i,2);
+            roundFour(inc4,2) = ex;
+            inc4 = inc4 + 1;
+        case 5
+            roundFive(inc5,1) = a(i,2);
+            roundFive(inc5,2) = ex;
+            inc5 = inc5 + 1;
+        case 6
+            roundSix(inc6,1) = a(i,2);
+            roundSix(inc6,2) = ex;
+            inc6 = inc6 + 1;
+        case 7
+            roundSeven(inc7,1) = a(i,2);
+            roundSeven(inc7,2) = ex;
+            inc7 = inc7 + 1;
+        case 8
+            roundEight(inc8,1) = a(i,2);
+            roundEight(inc8,2) = ex;
+            inc8 = inc8 + 1;
+        case 9
+            roundNine(inc9,1) = a(i,2);
+            roundNine(inc9,2) = ex;
+            inc9 = inc9 + 1;
+    end
+    if (i < rowsA && a(i+1,1) == 1)
+            caseValues = [0.01 1 5 10 25 50 75 100 200 300 400 500 750 1000 5000 10000 25000 50000 75000 ...
+            100000 200000 300000 400000 500000 750000 1000000];
+    end
+end
+
+myfit1 = polyfit(roundOne(:,2)', roundOne(:,1)', 1);
+x1 = linspace(0,500000, 1000);
+y1 = polyval(myfit1, x1);
+
+myfit2 = polyfit(roundTwo(:,2)', roundTwo(:,1)', 1 );
+x2 = linspace(0,500000, 1000);
+y2 = polyval(myfit2, x2);
+
+myfit3 = polyfit(roundThree(:,2)', roundThree(:,1)', 1);
+x3 = linspace(0,500000, 1000);
+y3 = polyval(myfit3, x3);
+
+myfit4 = polyfit(roundFour(:,2)', roundFour(:,1)', 1);
+x4 = linspace(0,500000, 1000);
+y4 = polyval(myfit4, x4);
+
+myfit5 = polyfit(roundFive(:,2)', roundFive(:,1)', 1);
+x5 = linspace(0,500000, 1000);
+y5 = polyval(myfit5, x5);
+
+myfit6 = polyfit(roundSix(:,2)', roundSix(:,1)', 1);
+x6 = linspace(0,500000, 1000);
+y6 = polyval(myfit6, x6);
+
+myfit7 = polyfit(roundSeven(:,2)', roundSeven(:,1)', 1);
+x7 = linspace(0,500000, 1000);
+y7 = polyval(myfit7, x7);
+
+myfit8 = polyfit(roundEight(:,2)', roundEight(:,1)', 1);
+x8 = linspace(0,500000, 1000);
+y8 = polyval(myfit8, x8);
+
+myfit9 = polyfit(roundNine(:,2)', roundNine(:,1)', 1);
+x9 = linspace(0,500000, 1000);
+y9 = polyval(myfit9, x9);
+
+hold on
+scatter(roundOne(:,2), roundOne(:,1))
+scatter(roundTwo(:,2), roundTwo(:,1))
+scatter(roundThree(:,2), roundThree(:,1))
+scatter(roundFour(:,2), roundFour(:,1))
+scatter(roundFive(:,2), roundFive(:,1))
+scatter(roundSix(:,2), roundSix(:,1))
+scatter(roundSeven(:,2), roundSeven(:,1))
+scatter(roundEight(:,2), roundEight(:,1))
+scatter(roundNine(:,2), roundNine(:,1))
+hold off
+
+hold on
+plot(x1, y1) 
+plot(x2, y2)
+plot(x3, y3)
+plot(x4, y4)
+plot(x5, y5)
+plot(x6, y6)
+plot(x7, y7)
+plot(x8, y8)
+plot(x9, y9)
+hold off
+
