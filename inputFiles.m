@@ -2,7 +2,7 @@
 % If some amount of money is chosen or indicated by an 'x' in a particular
 % round, that amount will be changed to 0 within the array
 caseValues = [0.01 1 5 10 25 50 75 100 200 300 400 500 750 1000 5000 10000 25000 50000 75000 ...
-    100000 200000 300000 400000 500000 750000 1000000];
+             100000 200000 300000 400000 500000 750000 1000000];
 
 % The player will always begin at the first round
 TOTAL_ROUNDS = 9;
@@ -41,10 +41,10 @@ for i = 1:rowsA
         end
     end
     ex = calculateRoundExpectation(caseValues, a(i,1));
-    switch (a(i,1))
+    switch (a(i,1)) % Determining which round it is at
         case 1
-            roundOne(inc1,1) = a(i,2);
-            roundOne(inc1,2) = ex;
+            roundOne(inc1,1) = a(i,2); %% Banker's off
+            roundOne(inc1,2) = ex; %% Our expectation
             inc1 = inc1 + 1;
         case 2
             roundTwo(inc2,1) = a(i,2);
@@ -85,6 +85,8 @@ for i = 1:rowsA
     end
 end
 
+%% 
+% The coefficients for the line of best fit are calculated here.
 myfit1 = polyfit(roundOne(:,2)', roundOne(:,1)', 1);
 x1 = linspace(0,500000, 1000);
 y1 = polyval(myfit1, x1);
@@ -121,27 +123,30 @@ myfit9 = polyfit(roundNine(:,2)', roundNine(:,1)', 1);
 x9 = linspace(0,500000, 1000);
 y9 = polyval(myfit9, x9);
 
+%% 
+% The line of best fit and the scatter plots are merged together.
+ylim([0; Inf]);
+grid on
 hold on
-scatter(roundOne(:,2), roundOne(:,1))
-scatter(roundTwo(:,2), roundTwo(:,1))
-scatter(roundThree(:,2), roundThree(:,1))
-scatter(roundFour(:,2), roundFour(:,1))
-scatter(roundFive(:,2), roundFive(:,1))
-scatter(roundSix(:,2), roundSix(:,1))
-scatter(roundSeven(:,2), roundSeven(:,1))
-scatter(roundEight(:,2), roundEight(:,1))
-scatter(roundNine(:,2), roundNine(:,1))
-hold off
-
-hold on
-plot(x1, y1) 
-plot(x2, y2)
-plot(x3, y3)
-plot(x4, y4)
-plot(x5, y5)
-plot(x6, y6)
-plot(x7, y7)
-plot(x8, y8)
-plot(x9, y9)
+% These are the scatter plots
+scatter(roundOne(:,2), roundOne(:,1), 'r')
+scatter(roundTwo(:,2), roundTwo(:,1), 'b')
+scatter(roundThree(:,2), roundThree(:,1), 'g')
+scatter(roundFour(:,2), roundFour(:,1), 'k')
+scatter(roundFive(:,2), roundFive(:,1), 'c')
+scatter(roundSix(:,2), roundSix(:,1), 'm')
+scatter(roundSeven(:,2), roundSeven(:,1), 'k')
+scatter(roundEight(:,2), roundEight(:,1), 'r')
+scatter(roundNine(:,2), roundNine(:,1), 'b')
+% These are the line of best fit
+plot(x1, y1, 'r') 
+plot(x2, y2, 'b')
+plot(x3, y3, 'g')
+plot(x4, y4, 'k')
+plot(x5, y5, 'c')
+plot(x6, y6, 'm')
+plot(x7, y7, 'k')
+plot(x8, y8, 'r')
+plot(x9, y9, 'b')
 hold off
 
